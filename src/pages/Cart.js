@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function Cart({ cart, updateCartQuantity, removeFromCart }) {
+function Cart({ cart, updateCartQuantity, removeFromCart, createOrder, clearCart, currentUser }) {
+  const navigate = useNavigate();
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleQuantityChange = (id, value) => {
@@ -8,12 +10,26 @@ function Cart({ cart, updateCartQuantity, removeFromCart }) {
     updateCartQuantity(id, quantity);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!cart.length) {
       window.alert('購物車目前沒有商品，無法下單。');
       return;
     }
-    window.alert(`感謝您的訂單！總計 ${total.toFixed(2)} 元，已送出。`);
+    if (!currentUser) {
+      window.alert('請先登入後再進行結帳。');
+      navigate('/login');
+      return;
+    }
+
+    const result = await createOrder(cart);
+    if (!result.success) {
+      window.alert(result.message || '建立訂單失敗，請稍後再試。');
+      return;
+    }
+
+    clearCart();
+    window.alert(`感謝您的訂單！總計 ${result.order.total.toFixed(2)} 元，已送出。\n訂單編號：${result.order.id}`);
+    navigate('/profile');
   };
 
   const handleUpdate = () => {
