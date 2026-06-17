@@ -1,7 +1,7 @@
 const handleResponse = async response => {
     const data = await response.json().catch(() => null);
     if (!response.ok) {
-        const message = data?.message || '伺服器回應錯誤。';
+        const message = data?.message || '請求失敗，請稍後再試。';
         throw new Error(message);
     }
     return data;
@@ -40,6 +40,15 @@ export const createOrder = async ({ username, items }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, items }),
+    });
+    return handleResponse(response);
+};
+
+export const submitReview = async ({ orderId, rating, comment }) => {
+    const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, rating, comment }),
     });
     return handleResponse(response);
 };

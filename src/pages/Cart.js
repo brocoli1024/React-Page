@@ -28,7 +28,8 @@ function Cart({ cart, updateCartQuantity, removeFromCart, createOrder, clearCart
     }
 
     clearCart();
-    window.alert(`感謝您的訂單！總計 ${result.order.total.toFixed(2)} 元，已送出。\n訂單編號：${result.order.id}`);
+    const earnedPoints = result.earnedPoints || 0;
+    window.alert(`感謝您的訂單！總計 ${result.order.total.toFixed(2)} 元，已送出。\n訂單編號：${result.order.id}\n本次獲得 ${earnedPoints} 點集點。`);
     navigate('/profile');
   };
 
